@@ -1,5 +1,7 @@
+import Layout from 'components/Layout';
+
 const Page = () => (
-    <div>Hello world</div>
+    <Layout>Hello world</Layout>
 );
 
 export default Page;
