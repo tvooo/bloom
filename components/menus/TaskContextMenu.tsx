@@ -1,4 +1,4 @@
-import { NavArrowRight, FastArrowRight, SunLight, Tv } from "iconoir-react";
+import { NavArrowRight, FastArrowRight, SunLight, Tv, Cancel } from "iconoir-react";
 import { nextMonday, startOfToday, startOfTomorrow } from "date-fns";
 
 import MenuItem from "components/menu/MenuItem";
@@ -9,7 +9,7 @@ import MoveToListMenu from "./MoveToListMenu";
 
 const TaskContextMenu = ({ task }: { task: Task }) => {
   const { updateTask } = useTasks();
-  const scheduleTask = (task: Task, scheduled: Date) => updateTask({ ...task, scheduled });
+  const scheduleTask = (task: Task, scheduled: Date | null) => updateTask({ ...task, scheduled });
   
   return (
     <>
@@ -22,6 +22,7 @@ const TaskContextMenu = ({ task }: { task: Task }) => {
       <MenuItem onClick={() => scheduleTask(task, startOfTomorrow())} icon={<NavArrowRight />} label="Tomorrow" />
       <MenuItem onClick={() => scheduleTask(task, nextMonday(new Date()))} icon={<Tv />} label="Weekend" />
       <MenuItem onClick={() => scheduleTask(task, nextMonday(new Date()))} icon={<FastArrowRight />} label="Next week" />
+      <MenuItem onClick={() => scheduleTask(task, null)} icon={<Cancel />} label="Clear" />
       <MenuSeparator />
       <MoveToListMenu task={task} />
     </>

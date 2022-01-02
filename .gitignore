@@ -5,3 +5,4 @@ db.json
 out/
 .env
 dist/
+tsconfig.tsbuildinfo
