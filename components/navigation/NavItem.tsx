@@ -33,7 +33,7 @@ interface NavItemProps {
   isActive?: boolean;
 }
 
-const NavItem = ({ children, onClick, icon, isActive }) => (
+const NavItem: React.FC<NavItemProps> = ({ children, onClick, icon, isActive }) => (
   <NavItemContainer onClick={onClick} aria-pressed={isActive}>
     {icon}
     <NavItemLabel>{children}</NavItemLabel>

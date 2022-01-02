@@ -8,9 +8,11 @@ import {
 import { useCallback, useState } from "react";
 import StatusIndicator from "./StatusIndicator";
 import Menu from "components/menu/Menu";
-import TaskContextMenu from "menus/TaskContextMenu";
+import TaskContextMenu from "components/menus/TaskContextMenu";
 import { startOfToday, startOfTomorrow } from "date-fns";
 import { isScheduledOn } from "utils/filters";
+import { useList } from "utils/api";
+import { Task } from "model/task";
 
 const TaskContainer = styled.div<{ isEditing?: boolean }>`
   padding: 0.4rem;
@@ -51,7 +53,7 @@ const TaskLabelInput = styled.input`
   background: transparent;
 `;
 
-const ScheduledIndicator = ({ task }) => {
+const ScheduledIndicator = ({ task }: { task: Task }) => {
   if (task.scheduled && isScheduledOn(startOfToday())(task)) {
     return <SunLight height="1.2em" style={{marginLeft: "var(--space-sm)"}} />;
   }
@@ -61,10 +63,9 @@ const ScheduledIndicator = ({ task }) => {
   return null;
 };
 
-const TaskLocation = ({ task }) => {
-  const isInProject = task.project && task.project !== "_inbox";
-  const isInArea = !!task.area;
-  if (isInProject) {
+const TaskLocation = ({ task }: { task: Task }) => {
+  const list = useList(task.list);
+  if(!list) { return null; }
     return (
       <small
         style={{
@@ -73,33 +74,24 @@ const TaskLocation = ({ task }) => {
           marginLeft: "var(--space-sm)",
         }}
       >
-        {task.project}
+        {list.label}
       </small>
     );
-  }
-  if (isInArea) {
-    return (
-      <small
-        style={{
-          display: "block",
-          color: "grey",
-          marginLeft: "var(--space-sm)",
-        }}
-      >
-        {task.area}
-      </small>
-    );
-  }
-  return null;
 };
 
-export const TaskItem = ({
+interface TaskItemProps {
+  task: Task;
+  showLocation?: boolean;
+  showScheduled?: boolean;
+  onComplete: (task: Task, complete: boolean) => void;
+  onEdit: (task: Task, label: string) => void;
+}
+export const TaskItem: React.FC<TaskItemProps> = ({
   task,
   showLocation,
   showScheduled,
   onComplete,
   onEdit,
-  dispatch,
 }) => {
   const [label, setLabel] = useState(task.label);
   const [isEditing, setEditing] = useState(false);
@@ -119,12 +111,11 @@ export const TaskItem = ({
     },
     [label]
   );
-  console.log(task);
   return (
     <TaskContainer isEditing={isEditing}>
       <StatusIndicator
         status={task.status}
-        onClick={() => onComplete(task, task.status === "todo")}
+        onClick={() => onComplete(task, task.status === "TODO")}
       />
       {showScheduled && <ScheduledIndicator task={task} />}
       {isEditing ? (
@@ -152,14 +143,14 @@ export const TaskItem = ({
       )}
       <div style={{ flex: "0 0 auto" }}>
         <Menu trigger={<MoreVert />}>
-          <TaskContextMenu task={task} dispatch={dispatch} />
+          <TaskContextMenu task={task} />
         </Menu>
       </div>
     </TaskContainer>
   );
 };
 
-export const ProjectItem = ({ children }) => (
+export const ProjectItem: React.FC = ({ children }) => (
   <TaskContainer>
     <LabelOutline height="1.6em" color="grey" />
     <TaskLabel>

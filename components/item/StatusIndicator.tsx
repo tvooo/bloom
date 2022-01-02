@@ -44,7 +44,7 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
     );
   }
 
-  return status === "done" ? (
+  return status === "DONE" ? (
     <StatusIndicatorWrapper>
       <CheckCircledOutline
         height="1.6em"

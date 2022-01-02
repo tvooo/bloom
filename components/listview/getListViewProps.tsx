@@ -7,53 +7,44 @@ import {
 } from "iconoir-react";
 
 import {
-  addTask,
-  completeTask,
-  renameTask,
-  scheduleTask,
-  deleteTask,
   Task,
 } from "model/task";
-import { isScheduledOn, inArea, inProject, not, isScheduledAfter, isScheduledBefore } from "utils/filters";
+import { inArea, inProject, not, isScheduledAfter, isScheduledBefore, isScheduled } from "utils/filters";
 import type { ListViewProps } from './ListView';
 import { ProgressPie } from "components/Pie";
-import { endOfToday, startOfTomorrow } from "date-fns";
+import { endOfToday, startOfToday, startOfTomorrow } from "date-fns";
+import type { List } from "model/list";
 
-const getProgress = (tasks): number => tasks.length > 0 ? (100 * tasks.filter(t => t.status === "done").length / tasks.length) : 0;
+const getProgress = (tasks: Task[]): number => tasks.length > 0 ? (100 * tasks.filter(t => t.status === "DONE").length / tasks.length) : 0;
 
-const getListViewProps = (list: string, tasks, dispatch, _mutate, projects): ListViewProps => {
+const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListViewProps => {
   const commonProps = {
-    onComplete: (id, completed) =>
-      completeTask(dispatch)(id, completed),
-    onEdit: (task: Task, label: string) => renameTask(dispatch)(task, label),
-    onDelete: (task: Task) => deleteTask(dispatch)(task),
-    onSchedule: (task: Task, scheduled: Date | null) =>
-      scheduleTask(dispatch)(task, task.scheduled ? null : scheduled),
-    dispatch,
+    splitCompletedTasks: true,
   };
-  if (list === "inbox") {
+
+  if (route === "_inbox") {
     return {
       title: "Inbox",
       icon: <MailOpened height="1em" />,
       showScheduled: true,
-      items: tasks.filter(t => inProject("_inbox")(t) && !t.area).filter(not(isScheduledOn())),
-      addTask: (task) => addTask(dispatch)(task),
+      items: tasks.filter(t => !t.list).filter(not(isScheduled)),
       ...commonProps,
     };
   }
 
-  if (list === "today") {
+  if (route === "_today") {
     return {
       title: "Today",
       icon: <SunLight height="1em" color="var(--color-today)" />,
       items: tasks.filter(isScheduledBefore(startOfTomorrow())),
       showLocation: true,
       showScheduled: false,
+      addTaskPreset: { scheduled: startOfToday() },
       ...commonProps,
     };
   }
 
-  if (list === "upcoming") {
+  if (route === "_upcoming") {
     return {
       title: "Upcoming",
       icon: <Calendar height="1em" />,
@@ -64,55 +55,55 @@ const getListViewProps = (list: string, tasks, dispatch, _mutate, projects): Lis
     };
   }
 
-  if (list === "archive") {
+  if (route === "_archive") {
     return {
       title: "Archive",
       icon: <Box height="1em" />,
-      items: tasks.filter(t => t.status === "done"),
+      items: tasks.filter(t => t.status === "DONE"),
       showLocation: true,
       showScheduled: true,
       ...commonProps,
+      splitCompletedTasks: false,
     };
   }
 
-  if (list.startsWith("area:")) {
-    const area = list.replace("area:", "");
-    return {
-      title: area,
-      icon: <BoxIso height="1em" />,
-      showScheduled: true,
-      items: [
-        // ...projects.filter(inArea(route.replace("area:", ""))),
-        ...tasks.filter(inArea(area)),
-      ],
-      addTask: (task) => addTask(dispatch)({ ...task, area }),
-      ...commonProps,
-    };
-  }
-
-  if (list.startsWith("project:")) {
-    const project = list.replace("project:", "");
-    return {
-      title: project,
-      icon: <ProgressPie progress={getProgress(tasks.filter(inProject(project)))} />,
-      showScheduled: true,
-      items: tasks.filter(inProject(project)),
-      addTask: (task) => addTask(dispatch)({ ...task, project }),
-      isRenamable: true,
-      list: projects.find(p => p.label === project),
-      ...commonProps,
-    };
+  if(route.length >= 1 && !route.startsWith('_')) {
+    // is a list id
+    const list = lists.find(l => `${l.id}` === route);
+    console.log(list);
+    // con
+    if(list && list.type === "AREA") {
+      return {
+        title: list.label,
+        icon: <BoxIso height="1em" />,
+        showScheduled: true,
+        items: [
+          // ...projects.filter(inArea(route.replace("area:", ""))),
+          ...tasks.filter(inArea(list)),
+        ],
+        isRenamable: true,
+        list,
+        addTaskPreset: { list: list.id },
+        ...commonProps,
+      };
+    } else if(list && list.type === "PROJECT") {
+      return {
+        title: list.label,
+        icon: <ProgressPie progress={getProgress(tasks.filter(inProject(list)))} />,
+        showScheduled: true,
+        items: tasks.filter(inProject(list)),
+        isRenamable: true,
+        addTaskPreset: { list: list.id },
+        list,
+        ...commonProps,
+      };
+    }
   }
 
   return {
     title: "Impossible!",
-    icon: <></>,
+    icon: <>💀</>,
     items: [],
-    onDelete: () => null,
-    onComplete: () => null,
-    onEdit: () => null,
-    onSchedule: () => null,
-    dispatch: () => null,
   };
 };
 

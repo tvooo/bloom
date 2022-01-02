@@ -1,6 +1,5 @@
-import React, { useContext } from "react";
+import React from "react";
 import { styled } from "@linaria/react";
-import useSWR from "swr";
 import {
   SunLight,
   BoxIso,
@@ -13,12 +12,11 @@ import {
 import NavItem from "./NavItem";
 import Separator from "./Separator";
 import Button from "components/Button";
-import { addProject } from "model/project";
-import { StateContext } from "model/reducer";
 import { ProgressPie } from "components/Pie";
-import { inProject } from "utils/filters";
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
+import { inProject, isArea, isProject } from "utils/filters";
+import { useLists, useTasks } from "utils/api";
+import type { Task } from "model/task";
+import { Area, Project } from "model/list";
 
 const NavigationWrapper = styled.div`
   display: flex;
@@ -26,46 +24,51 @@ const NavigationWrapper = styled.div`
   height: 100%;
 `;
 
-const getProgress = (tasks): number =>
+const getProgress = (tasks: Task[]): number =>
   tasks.length > 0
-    ? (100 * tasks.filter((t) => t.status === "done").length) / tasks.length
+    ? (100 * tasks.filter((t) => t.status === "DONE").length) / tasks.length
     : 0;
 
-const Navigation = ({ route, currentRoute }) => {
-  const { data: areas } = useSWR("http://localhost:3001/areas", fetcher);
-  const {
-    state: { projects, tasks },
-    dispatch,
-  } = useContext(StateContext);
+interface NavigationProps {
+  route: (n: string) => void;
+  currentRoute: string
+}
+const Navigation: React.FC<NavigationProps> = ({ route, currentRoute }) => {
+  const { lists } = useLists();
+  const { tasks } = useTasks();
+  const areas: Area[] = lists.filter(isArea);
+  const projects: Project[] = lists.filter(isProject);
+
+  const dispatch = () => null;
 
   return (
     <NavigationWrapper>
       <NavItem
-        onClick={() => route("inbox")}
+        onClick={() => route("_inbox")}
         icon={<MailOpened height="1.2em" />}
-        isActive={currentRoute === `inbox`}
+        isActive={currentRoute === `_inbox`}
       >
         Inbox
       </NavItem>
       <NavItem
-        onClick={() => route("today")}
+        onClick={() => route("_today")}
         icon={<SunLight height="1.2em" color="var(--color-today)" />}
-        isActive={currentRoute === `today`}
+        isActive={currentRoute === `_today`}
       >
         Today
       </NavItem>
       <NavItem
-        onClick={() => route("upcoming")}
+        onClick={() => route("_upcoming")}
         icon={<Calendar height="1.2em" color="var(--color-today)" />}
-        isActive={currentRoute === `upcoming`}
+        isActive={currentRoute === `_upcoming`}
       >
         Upcoming
       </NavItem>
       <Separator />
       <NavItem
-        onClick={() => route("archive")}
+        onClick={() => route("_archive")}
         icon={<Box height="1.2em" color="var(--color-today)" />}
-        isActive={currentRoute === `archive`}
+        isActive={currentRoute === `_archive`}
       >
         Archive
       </NavItem>
@@ -73,13 +76,13 @@ const Navigation = ({ route, currentRoute }) => {
       {projects.map((project) => (
         <NavItem
           key={project.id}
-          onClick={() => route(`project:${project.label}`)}
+          onClick={() => route(`${project.id}`)}
           icon={
             <ProgressPie
-              progress={getProgress(tasks.filter(inProject(project.label)))}
+              progress={getProgress(tasks.filter(inProject(project)))}
             />
           }
-          isActive={currentRoute === `project:${project.label}`}
+          isActive={currentRoute === `${project.id}`}
         >
           {project.label}
         </NavItem>
@@ -87,12 +90,12 @@ const Navigation = ({ route, currentRoute }) => {
       <Separator />
       {areas.map((area) => (
         <NavItem
-          key={area}
-          onClick={() => route(`area:${area}`)}
+          key={area.id}
+          onClick={() => route(`${area.id}`)}
           icon={<BoxIso height="1.2em" color="var(--color-area)" />}
-          isActive={currentRoute === `area:${area}`}
+          isActive={currentRoute === `${area.id}`}
         >
-          {area}
+          {area.label}
         </NavItem>
       ))}
       <div style={{ marginTop: "auto", display: "flex" }}>
@@ -100,7 +103,7 @@ const Navigation = ({ route, currentRoute }) => {
           <Plus /> Area
         </Button>
         <Button
-          onClick={() => addProject(dispatch)({ label: "New project" })}
+          // onClick={() => addProject(dispatch)({ label: "New project", type: "PROJECT" })}
           style={{ flex: "1 0 auto", margin: "0 var(--space-xs)" }}
         >
           <Plus /> Project

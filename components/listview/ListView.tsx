@@ -1,53 +1,50 @@
-import { FC, useCallback, useContext, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Plus } from "iconoir-react";
 
-import { Project, renameProject } from "model/project";
+import type { List } from "model/list";
 import { TaskItem, ProjectItem } from "components/item/Item";
 import Button from "components/Button";
 import { Ul, Li } from "./List";
 import ToggleCompletedLink from "./ToggleCompletedLink";
 import ListViewHeader, { ListViewHeaderInput } from "./ListViewHeader";
 import ListViewWrapper from "./ListViewWrapper";
-import { StateContext } from "model/reducer";
 import { Task } from "model/task";
+import { useLists, useTasks } from "utils/api";
 
 export interface ListViewProps {
   items: any[];
   icon: any;
   title: string;
-  onDelete: (task: Task) => void;
-  onComplete: (task: Task, completed: boolean) => void;
-  onEdit: (task: Task, label: string) => void;
-  onSchedule: (task: Task, scheduled: Date | null) => void;
   showLocation?: boolean;
   showScheduled?: boolean;
-  addTask?: (task: Omit<Task, 'id'>) => void;
   isRenamable?: boolean;
-  dispatch: Function;
-  list?: Project;
+  list?: List;
+  splitCompletedTasks?: boolean;
+  addTaskPreset?: Partial<Task>,
 }
 
 const ListView: FC<ListViewProps> = ({
   items,
   icon,
   title,
-  addTask,
-  onComplete,
-  onEdit,
-  onSchedule,
   showLocation,
   showScheduled,
-  onDelete,
   isRenamable,
-  // dispatch,
+  splitCompletedTasks,
   list,
+  addTaskPreset,
 }) => {
-  const open = items.filter((i) => i.status !== "done");
-  const completed = items.filter((i) => i.status === "done");
+  const open = items.filter((i) => i.status !== "DONE");
+  const completed = items.filter((i) => i.status === "DONE");
   const [showCompleted, toggleCompleted] = useState(false);
-  const { dispatch } = useContext(StateContext);
-  const handlers = { onComplete, onEdit, onSchedule, onDelete, dispatch };
+  
+  const { addTask, updateTask } = useTasks();
+  const { updateList } = useLists();
 
+  const onEdit = (task: Task, label: string) => updateTask({...task, label});
+  const onComplete = (task: Task, completed: boolean) => updateTask({...task, status: completed ? 'DONE' : 'TODO'});
+  
+  const handlers = { onComplete, onEdit };
   const [label, setLabel] = useState(title);
   const [isEditing, setEditing] = useState(false);
   useEffect(() => {
@@ -65,7 +62,8 @@ const ListView: FC<ListViewProps> = ({
         // TODO: blur
       }
       if (e.key === "Enter") {
-        renameProject(dispatch)(list, label);
+        // renameProject(dispatch)(list, label);
+        updateList({...list, label});
         setEditing(false);
       }
     },
@@ -92,35 +90,54 @@ const ListView: FC<ListViewProps> = ({
           <div onClick={() => isRenamable && setEditing(true)}>{title}</div>
         )}
       </ListViewHeader>
-      <Ul>
-        {open.map((item, index) => (
-          <Li key={item.id}>
-            {item.type === "project" ? (
-              <ProjectItem>{item.label}</ProjectItem>
-            ) : (
-              <TaskItem
-                task={item}
-                {...handlers}
-                showLocation={showLocation}
-                showScheduled={showScheduled}
-              />
-            )}
-          </Li>
-        ))}
-      </Ul>
+      {splitCompletedTasks ? (
+        <Ul>
+          {open.map((item, index) => (
+            <Li key={item.id}>
+              {item.type === "project" ? (
+                <ProjectItem>{item.label}</ProjectItem>
+              ) : (
+                <TaskItem
+                  task={item}
+                  {...handlers}
+                  showLocation={showLocation}
+                  showScheduled={showScheduled}
+                />
+              )}
+            </Li>
+          ))}
+        </Ul>
+      ) : (
+        <Ul>
+          {items.map((item, index) => (
+            <Li key={item.id}>
+              {item.type === "project" ? (
+                <ProjectItem>{item.label}</ProjectItem>
+              ) : (
+                <TaskItem
+                  task={item}
+                  {...handlers}
+                  showLocation={showLocation}
+                  showScheduled={showScheduled}
+                />
+              )}
+            </Li>
+          ))}
+        </Ul>
+      )}
       {addTask && (
         <Button
-          onClick={() => addTask({ project: "_inbox", label: "New task", status: "todo" })}
+          onClick={() => addTask({ label: "New task", status: "TODO", scheduled: null, ...addTaskPreset })}
         >
           <Plus /> Add task
         </Button>
       )}
-      {completed.length > 0 && (
+      {splitCompletedTasks && completed.length > 0 && (
         <ToggleCompletedLink onClick={() => toggleCompleted((show) => !show)}>
           {showCompleted ? "Hide" : "Show"} {completed.length} completed tasks
         </ToggleCompletedLink>
       )}
-      {completed.length > 0 && showCompleted && (
+      {splitCompletedTasks && completed.length > 0 && showCompleted && (
         <Ul>
           {completed.map((item, index) => (
             <Li key={item.id}>

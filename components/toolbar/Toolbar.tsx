@@ -3,6 +3,7 @@ import { styled } from "@linaria/react";
 import { Plus } from "iconoir-react";
 
 import Button from "components/Button";
+import Logo from "./Logo";
 
 const ToolBarWrapper = styled.nav`
   display: flex;
@@ -15,7 +16,7 @@ const ToolBarWrapper = styled.nav`
 
 const Toolbar = () => (
   <ToolBarWrapper>
-    <h1><span style={{ opacity: '0.9' }}>b</span><span style={{ opacity: '0.8' }}>l</span><span style={{ opacity: '0.7' }}>o</span><span style={{ opacity: '0.6' }}>o</span><span style={{ opacity: '0.5' }}>m</span></h1>
+    <Logo />
     <Button onClick={() => null}>
       <Plus style={{ marginRight: "0.5rem" }} />{" "}
       <span style={{ textDecoration: "underline" }}>Q</span>uick add

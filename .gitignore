@@ -2,3 +2,5 @@
 node_modules
 .linaria-cache
 db.json
+out/
+.env

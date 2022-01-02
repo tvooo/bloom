@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react'
+import type { ReactNode } from 'react';
 
 import MenuItemWrapper from './MenuItemWrapper';
 
@@ -28,7 +29,12 @@ const MenuItemLabel = styled.div`
   flex: 1 1 auto;
 `;
 
-const MenuItem = ({ icon, label, onClick }) => (
+interface MenuItemProps {
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}
+const MenuItem: React.FC<MenuItemProps> = ({ icon, label, onClick }) => (
   <MenuItemWrapper>
   <MenuItemButton onClick={() => onClick && onClick()}>
     <MenuItemIcon>{icon}</MenuItemIcon>

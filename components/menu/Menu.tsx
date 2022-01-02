@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { styled } from "@linaria/react";
 import Button from "components/Button";
 import { AnimatePresence, motion } from "framer-motion";
@@ -25,8 +25,12 @@ const TriggerWrapper = styled.div`
   position: relative;
 `;
 
-const Menu = ({ trigger, children }) => {
-  const menuRef = useRef(null);
+interface MenuProps {
+  trigger: ReactNode;
+  children: ReactNode;
+}
+const Menu: React.FC<MenuProps> = ({ trigger, children }) => {
+  const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   
