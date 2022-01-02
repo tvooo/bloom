@@ -34,7 +34,7 @@ interface NavigationProps {
   currentRoute: string
 }
 const Navigation: React.FC<NavigationProps> = ({ route, currentRoute }) => {
-  const { lists } = useLists();
+  const { lists, addList } = useLists();
   const { tasks } = useTasks();
   const areas: Area[] = lists.filter(isArea);
   const projects: Project[] = lists.filter(isProject);
@@ -99,11 +99,14 @@ const Navigation: React.FC<NavigationProps> = ({ route, currentRoute }) => {
         </NavItem>
       ))}
       <div style={{ marginTop: "auto", display: "flex" }}>
-        <Button style={{ flex: "1 0 auto", margin: "0 var(--space-xs)" }}>
+        <Button
+          onClick={() => addList({ label: "New area", type: "AREA" })}
+          style={{ flex: "1 0 auto", margin: "0 var(--space-xs)" }}
+        >
           <Plus /> Area
         </Button>
         <Button
-          // onClick={() => addProject(dispatch)({ label: "New project", type: "PROJECT" })}
+          onClick={() => addList({ label: "New project", type: "PROJECT" })}
           style={{ flex: "1 0 auto", margin: "0 var(--space-xs)" }}
         >
           <Plus /> Project

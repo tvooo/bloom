@@ -3,7 +3,6 @@ import type { List, ListId } from "model/list";
 import { useCallback } from "react";
 import { Task } from "model/task";
 
-// export const baseUrl = 'http://localhost:3001';
 export const baseUrl = ``;
 
 export const makeHeaders = (auth?: boolean, payload?: any) => {
@@ -64,6 +63,16 @@ export const useLists = () => {
         `${baseUrl}/api/lists`,
         fetcher
     );
+    const addList = useCallback(async (list: Partial<List>) => {
+        mutate(async (lists: List[]) => {
+            await fetch(`${baseUrl}/api/lists`, {
+                method: "POST",
+                body: JSON.stringify(list),
+                headers: makeHeaders(true, list),
+            });
+            return [...lists, list]
+        });
+    }, []);
     const updateList = useCallback(async (list) => {
         mutate(async (lists: List[]) => {
             await fetch(`${baseUrl}/api/lists/${list.id}`, {
@@ -79,7 +88,7 @@ export const useLists = () => {
         });
     }, []);
 
-    return { lists: data || [], updateList };
+    return { lists: data || [], updateList, addList };
 }
 
 export const useList = (listId?: ListId) => {

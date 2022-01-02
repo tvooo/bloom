@@ -6,6 +6,7 @@ import serveStatic from 'serve-static';
 import passport from 'passport';
 import logger from 'morgan';
 import session from 'express-session';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { Strategy as LocalStrategy } from 'passport-local';
@@ -33,6 +34,11 @@ passport.use(new LocalStrategy({
 }));
 
 app.use(logger('dev'));
+if(process.env.NODE_ENV === "development") {
+    app.use(createProxyMiddleware(['/**', '!/api/**'], { target: 'http://localhost:3000', ws: true }));
+} else {
+    app.use(serveStatic(__dirname + '/../out'));
+}
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -42,7 +48,6 @@ if(process.env.NODE_ENV === "development") {
 } else {
     console.log('Running in production mode. CORS is disabled.');
 }
-app.use(serveStatic(__dirname + '/../out'));
 app.use(session({ secret: process.env.BLOOM_SECRET || 'super_secret', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());

@@ -34,6 +34,17 @@ router.get('/areas', auth.required, (req, res, next) => {
   });
 });
 
+router.post('/', auth.required, (req, res, next) => {
+  const { label, list, type } = req.body;
+  db.get('INSERT INTO lists (label, list, type, status) VALUES (?, ?, ?, ?)', [label, list, type, 'OPEN'], (error, result) => {
+    if (error) {
+      res.status(400);
+      return res.send(error.message);
+    }
+    return res.json(result);
+  });
+});
+
 router.get('/:id', auth.required, (req, res, next) => {
   const { id } = req.params;
   db.get('SELECT * FROM lists WHERE id=?', id, (error: Error | null, result: any) => {
