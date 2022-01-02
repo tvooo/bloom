@@ -13,6 +13,7 @@
     "build": "next build",
     "export": "next export",
     "server:start": "ts-node server/index.ts",
+    "server:build": "tsc -p server",
     "server:dev": "NODE_ENV=development ts-node-dev --respawn --transpile-only server/index.ts"
   },
   "dependencies": {
