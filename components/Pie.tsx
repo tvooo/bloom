@@ -30,7 +30,7 @@ const Pie = styled.circle<{ progress: number; color: string; size: number }>`
   }};
 `;
 
-export const ProgressPie = ({ progress, size = 16 }: { progress: number; size: number }) => {
+export const ProgressPie = ({ progress, size = 16 }: { progress: number; size?: number }) => {
   return (
     <svg width={`${size}px`} height={`${size}px`} style={{ transform: 'rotate(-90deg)' }}>
       <Pie progress={100} color="var(--color-neutral-light)" size={size} />
