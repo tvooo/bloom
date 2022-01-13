@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="260px" height="260px" viewBox="0 0 260 260" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>dotgrid-22A13-910052</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="dotgrid-22A13-910052" transform="translate(10.000000, 32.000000)">
+            <path d="M0,45 L0,75 C0,141.27417 53.72583,195 120,195 C186.27417,195 240,141.27417 240,75 L240,0 M0,45 C66.27417,45 120,78.5786438 120,120 L120,165 M240,0 C173.72583,0 120,53.72583 120,120" id="Shape" stroke="#000000" stroke-width="19"></path>
+            <polyline id="Path" stroke="#000000" stroke-width="22" points="75 120 75 120 120 165 195 60"></polyline>
+        </g>
+    </g>
+</svg>

@@ -31,6 +31,9 @@ const ApplicationLayout = ({ title, children, route, currentRoute }: Application
         <GlobalStyle>
             <Head>
             <title>{title ? `${title} — bloom` : 'bloom'}</title>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="crossOrigin" />
+            <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" /> 
             </Head>
             <Toolbar />
             <Container>

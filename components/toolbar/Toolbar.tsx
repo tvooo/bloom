@@ -1,8 +1,6 @@
 import React from "react";
 import { styled } from "@linaria/react";
-import { Plus } from "iconoir-react";
 
-import Button from "components/Button";
 import Logo from "./Logo";
 
 const ToolBarWrapper = styled.nav`
@@ -16,11 +14,10 @@ const ToolBarWrapper = styled.nav`
 
 const Toolbar = () => (
   <ToolBarWrapper>
-    <Logo />
-    <Button onClick={() => null}>
-      <Plus style={{ marginRight: "0.5rem" }} />{" "}
-      <span style={{ textDecoration: "underline" }}>Q</span>uick add
-    </Button>
+    <div style={{ display: 'flex', alignItems: 'center', fontSize: '1.4rem', justifyContent: 'center' }}>
+      <Logo />
+      <strong>&nbsp; teaque</strong>
+    </div>
   </ToolBarWrapper>
 );
 

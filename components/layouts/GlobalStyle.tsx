@@ -115,7 +115,7 @@ const GlobalStyle = styled.div`
   --color-focus: #7c5ea5;
 
   --color-project: #437659;
-  --color-project: #64af83;
+  --color-project: #7c5ea5;
   --color-today: #6166aa;
   --color-next: #6166aa;
   --color-area: #73a6ca;
@@ -141,6 +141,8 @@ const GlobalStyle = styled.div`
   height: 100%;
 
   background: var(--color-neutral-lighter);
+
+  font-family: Inter;
 `;
 
 export default GlobalStyle;

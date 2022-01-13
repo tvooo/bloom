@@ -1,5 +1,16 @@
 import React from 'react';
+import { styled } from '@linaria/react';
 
-const Logo = () => (<h1><span style={{ opacity: '0.9' }}>b</span><span style={{ opacity: '0.8' }}>l</span><span style={{ opacity: '0.7' }}>o</span><span style={{ opacity: '0.6' }}>o</span><span style={{ opacity: '0.5' }}>m</span></h1>);
+const Wrapper = styled.div`
+  position: relative;
+  width: 32px;
+  height: 32px;
+`
+
+const Logo = () => (
+    <Wrapper>
+        <img src="/teaque.svg" />
+    </Wrapper>
+)
 
 export default Logo;
