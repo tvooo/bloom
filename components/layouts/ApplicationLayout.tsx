@@ -14,6 +14,9 @@ const Container = styled.div<{ showSidebar: boolean }>`
   padding: 0 var(--space-sm);
 
   @media only screen and (max-width: 480px) {
+    & .sidebar {
+        display: ${props => props.showSidebar ? 'block' : 'none'};
+    }
     & .content {
         display: ${props => props.showSidebar ? 'none' : 'block'};
     }
@@ -21,7 +24,7 @@ const Container = styled.div<{ showSidebar: boolean }>`
 `;
 
 const Column = styled.div`
-  flex: 1 1 220px;
+  flex: 1 0 280px;
   padding: var(--space-sm);
   overflow-y: auto;
 `;
@@ -34,7 +37,7 @@ interface ApplicationLayoutProps {
 }
 
 const ApplicationLayout = ({ title, children, route, currentRoute }: ApplicationLayoutProps) => {
-    const [showSidebar, toggleSidebar] = useState(false);
+    const [showSidebar, toggleSidebar] = useState(true);
     return (
         <GlobalStyle>
             <Head>
@@ -45,15 +48,13 @@ const ApplicationLayout = ({ title, children, route, currentRoute }: Application
             </Head>
             <Toolbar showSidebar={showSidebar} onToggleSidebar={() => toggleSidebar(t => !t)} />
             <Container showSidebar={showSidebar}>
-                {showSidebar && 
-                <Column>
+                <Column className="sidebar">
                     <Navigation
                     route={(r) => { route(r); toggleSidebar(false); }}
                     currentRoute={currentRoute}
                     />
                 </Column>
-                }
-                <Column className="content" style={{ flex: '1 1 auto', minWidth: 0 }}>{children}
+                <Column className="content" style={{ flex: '1 1 100%', minWidth: 0 }}>{children}
                 </Column>
             </Container>
         </GlobalStyle>
