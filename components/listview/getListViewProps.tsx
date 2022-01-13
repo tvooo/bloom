@@ -89,7 +89,7 @@ const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListView
     } else if(list && list.type === "PROJECT") {
       return {
         title: list.label,
-        icon: <ProgressPie progress={getProgress(tasks.filter(inProject(list)))} />,
+        icon: <ProgressPie progress={getProgress(tasks.filter(inProject(list)))} size={24} />,
         showScheduled: true,
         items: tasks.filter(inProject(list)),
         isRenamable: true,
