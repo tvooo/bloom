@@ -10,7 +10,7 @@ const Popover = styled.div`
   right: 0;
 `;
 
-const MenuWrapper = styled.div`
+const MenuWrapper = styled.ul`
   background: white;
   box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.05);
   border-radius: var(--space-xs);
@@ -65,6 +65,7 @@ const Menu: React.FC<MenuProps> = ({ trigger, children }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.12 }}
         >
 
         <Popover ref={menuRef}>
