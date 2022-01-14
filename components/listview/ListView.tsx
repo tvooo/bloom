@@ -42,7 +42,7 @@ const ListView: FC<ListViewProps> = ({
   const { updateList } = useLists();
 
   const onEdit = (task: Task, label: string) => updateTask({...task, label});
-  const onComplete = (task: Task, completed: boolean) => updateTask({...task, status: completed ? 'DONE' : 'TODO'});
+  const onComplete = (task: Task, completed: boolean) => updateTask({...task, status: completed ? 'DONE' : 'TODO', completedAt: completed ? new Date() : undefined});
   
   const handlers = { onComplete, onEdit };
   const [label, setLabel] = useState(title);

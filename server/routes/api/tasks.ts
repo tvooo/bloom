@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import auth from '../auth';
 import db from '../../database/db';
+import { formatISO } from 'date-fns';
 
 const router = Router();
 
@@ -42,9 +43,9 @@ router.get('/:id', auth.required, (req, res, next) => {
 
 router.patch('/:id', auth.required, (req, res, next) => {
   const { id } = req.params;
-  const { label, status, scheduled, list } = req.body;
-  console.log(label, id, status, scheduled, typeof scheduled);
-  db.run(`UPDATE tasks SET label = ?, status = ?, scheduled = ?, list = ? WHERE id = ?`, [label, status, scheduled, list, parseInt(id, 10)], (error: Error | null, result: any) => {
+  const { label, status, scheduled, list, completedAt } = req.body;
+  console.log(label, id, completedAt);
+  db.run(`UPDATE tasks SET label = ?, status = ?, scheduled = ?, list = ?, updatedAt = ?, completedAt = ? WHERE id = ?`, [label, status, scheduled, list, formatISO(new Date()), completedAt, parseInt(id, 10)], (error: Error | null, result: any) => {
     console.log(error, result)
     if (error) {
       res.status(400);

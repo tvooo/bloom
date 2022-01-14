@@ -9,10 +9,10 @@ import {
 import {
   Task,
 } from "model/task";
-import { inArea, inProject, not, isScheduledAfter, isScheduledBefore, isScheduled } from "utils/filters";
+import { inArea, inProject, not, isScheduledAfter, isScheduledBefore, isScheduled, ensureDate } from "utils/filters";
 import type { ListViewProps } from './ListView';
 import { ProgressPie } from "components/Pie";
-import { endOfToday, startOfToday, startOfTomorrow } from "date-fns";
+import { endOfToday, isToday, parseISO, startOfToday, startOfTomorrow } from "date-fns";
 import type { List } from "model/list";
 
 const getProgress = (tasks: Task[]): number => tasks.length > 0 ? (100 * tasks.filter(t => t.status === "DONE").length / tasks.length) : 0;
@@ -36,7 +36,15 @@ const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListView
     return {
       title: "Today",
       icon: <SunLight height="1em" color="var(--color-today)" />,
-      items: tasks.filter(isScheduledBefore(startOfTomorrow())),
+      items: tasks.filter(task => {
+        if(isScheduledBefore(startOfTomorrow())(task) && task.status === "TODO") {
+          return true;
+        }
+        if(task.status === "DONE" && !!task.completedAt && isToday(ensureDate(task.completedAt))) {
+          return true;
+        }
+        return false;
+      }),
       showLocation: true,
       showScheduled: false,
       addTaskPreset: { scheduled: startOfToday() },
