@@ -59,6 +59,7 @@ const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListView
       items: tasks.filter(isScheduledAfter(endOfToday())),
       showLocation: true,
       showScheduled: false,
+      splitByDate: true,
       ...commonProps,
     };
   }
