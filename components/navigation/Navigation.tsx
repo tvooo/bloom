@@ -73,7 +73,7 @@ const Navigation: React.FC<NavigationProps> = ({ route, currentRoute }) => {
         Archive
       </NavItem>
       <Separator />
-      {projects.map((project) => (
+      {projects.filter(project => project.status === "OPEN").map((project) => (
         <NavItem
           key={project.id}
           onClick={() => route(`${project.id}`)}

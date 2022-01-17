@@ -19,7 +19,8 @@ router.get('/', auth.required, (req, res, next) => {
 router.post('/', auth.required, (req, res, next) => {
   // const { id } = req.params;
   const { label, list, status, scheduled } = req.body;
-  db.get('INSERT INTO tasks (label, list, status, scheduled) VALUES (?, ?, ?, ?)', [label, list, status, scheduled], (error, result) => {
+  const now = formatISO(new Date());
+  db.get('INSERT INTO tasks (label, list, status, scheduled, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)', [label, list, status, scheduled, now, now], (error, result) => {
     // console.log(error, result)
     if (error) {
       res.status(400);

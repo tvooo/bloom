@@ -1,7 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react";
 import { Plus } from "iconoir-react";
-import { format, isBefore, isSameDay, isSameWeek, isTomorrow, nextMonday, nextSaturday, nextSunday, startOfDay } from "date-fns";
-
 import type { List } from "model/list";
 import { TaskItem, ProjectItem } from "components/item/Item";
 import Button from "components/Button";
@@ -11,36 +9,8 @@ import ListViewHeader, { ListViewHeaderInput } from "./ListViewHeader";
 import ListViewWrapper from "./ListViewWrapper";
 import { Task } from "model/task";
 import { useLists, useTasks } from "utils/api";
-import { ensureDate } from "utils/filters";
 import { EditingItem } from "components/item/EditingItem";
-
-const groupByDate = (items: Task[]): Array<{ label: string; items: Task[] }> => {
-  const result: Record<string, Task[]> = {};
-  items.forEach(item => {
-    let label: null | string = "Later";
-    if (item.scheduled) {
-      if (isSameWeek(nextMonday(new Date()), ensureDate(item.scheduled))) {
-        label = "Next week";
-      }
-      if (isSameDay(nextSaturday(new Date()), ensureDate(item.scheduled))) {
-        label = "Weekend";
-      }
-      if (isSameDay(nextSunday(new Date()), ensureDate(item.scheduled))) {
-        label = "Weekend";
-      }
-      if (isBefore(ensureDate(item.scheduled), nextSaturday(new Date()))) {
-        label = format(startOfDay(ensureDate(item.scheduled)), "EEE, d MMM yyyy");
-      }
-      if (isTomorrow(ensureDate(item.scheduled))) {
-        label = "Tomorrow";
-      }
-    } else {
-      label = '';
-    }
-    result[label] = result[label] ? [...result[label], item] : [item];
-  });
-  return Object.keys(result).map(dt => ({ label: dt, items: result[dt] }));
-}
+import groupByDate from "./groupByDate";
 
 export interface ListViewProps {
   items: any[];
@@ -108,7 +78,6 @@ const ListView: FC<ListViewProps> = ({
     setLabel(title);
   }, [title]);
   const sections = splitByDate ? groupByDate(items) : [{
-
     label: null,
     items: splitCompletedTasks ? open : items
   }
@@ -117,7 +86,11 @@ const ListView: FC<ListViewProps> = ({
   return (
     <ListViewWrapper>
       <ListViewHeader>
-        {icon}{" "}
+        {list && list.type === "PROJECT" ? (
+          <div onClick={() => {
+            updateList({ ...list, status: list.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED' });
+          }}>{icon}</div>
+        ) : icon}
         {isEditing && isRenamable ? (
           <ListViewHeaderInput
             autoFocus

@@ -7,7 +7,7 @@ import { isArea, isProject } from "utils/filters";
 import ApplicationLayout from "components/layouts/ApplicationLayout";
 
 const Page = () => {
-  const [route, setRoute] = useState("_inbox");
+  const [route, setRoute] = useState("_today");
   const { tasks } = useTasks();
   const {lists} = useLists();
 

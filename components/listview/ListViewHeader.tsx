@@ -4,9 +4,7 @@ const ListViewHeader = styled.h2`
   display: flex;
   align-items: center;
   margin-bottom: var(--space-large);
-  & > svg {
-    margin-right: 0.2em;
-  }
+  gap: 0.2em;
 `;
 
 export const ListViewHeaderInput = styled.input`
