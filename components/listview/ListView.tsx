@@ -12,25 +12,26 @@ import ListViewWrapper from "./ListViewWrapper";
 import { Task } from "model/task";
 import { useLists, useTasks } from "utils/api";
 import { ensureDate } from "utils/filters";
+import { EditingItem } from "components/item/EditingItem";
 
 const groupByDate = (items: Task[]): Array<{ label: string; items: Task[] }> => {
   const result: Record<string, Task[]> = {};
   items.forEach(item => {
     let label: null | string = "Later";
-    if(item.scheduled) {
-      if(isSameWeek(nextMonday(new Date()), ensureDate(item.scheduled))) {
+    if (item.scheduled) {
+      if (isSameWeek(nextMonday(new Date()), ensureDate(item.scheduled))) {
         label = "Next week";
       }
-      if(isSameDay(nextSaturday(new Date()), ensureDate(item.scheduled))) {
+      if (isSameDay(nextSaturday(new Date()), ensureDate(item.scheduled))) {
         label = "Weekend";
       }
-      if(isSameDay(nextSunday(new Date()), ensureDate(item.scheduled))) {
+      if (isSameDay(nextSunday(new Date()), ensureDate(item.scheduled))) {
         label = "Weekend";
       }
-      if(isBefore(ensureDate(item.scheduled), nextSaturday(new Date()))) {
-        label = format(startOfDay(ensureDate(item.scheduled)),  "EEE, d MMM yyyy");
+      if (isBefore(ensureDate(item.scheduled), nextSaturday(new Date()))) {
+        label = format(startOfDay(ensureDate(item.scheduled)), "EEE, d MMM yyyy");
       }
-      if(isTomorrow(ensureDate(item.scheduled))) {
+      if (isTomorrow(ensureDate(item.scheduled))) {
         label = "Tomorrow";
       }
     } else {
@@ -38,7 +39,7 @@ const groupByDate = (items: Task[]): Array<{ label: string; items: Task[] }> => 
     }
     result[label] = result[label] ? [...result[label], item] : [item];
   });
-  return Object.keys(result).map(dt => ({ label: dt, items: result[dt]}));
+  return Object.keys(result).map(dt => ({ label: dt, items: result[dt] }));
 }
 
 export interface ListViewProps {
@@ -69,6 +70,7 @@ const ListView: FC<ListViewProps> = ({
   const open = items.filter((i) => i.status !== "DONE");
   const completed = items.filter((i) => i.status === "DONE");
   const [showCompleted, toggleCompleted] = useState(false);
+  const [addingTask, setAddingTask] = useState(false);
 
   const { addTask, updateTask } = useTasks();
   const { updateList } = useLists();
@@ -129,64 +131,42 @@ const ListView: FC<ListViewProps> = ({
         )}
       </ListViewHeader>
       {sections.map(section => (
-        <div>
+        <div key={section.label}>
           {section.label && <h3>{section.label}</h3>}
           <Ul>
-          {section.items.map((item, index) => (
-            <Li key={item.id}>
-              {item.type === "project" ? (
-                <ProjectItem>{item.label}</ProjectItem>
-              ) : (
-                <TaskItem
-                  task={item}
-                  {...handlers}
-                  showLocation={showLocation}
-                  showScheduled={showScheduled}
+            {section.items.map((item, index) => (
+              <Li key={item.id}>
+                {item.type === "project" ? (
+                  <ProjectItem>{item.label}</ProjectItem>
+                ) : (
+                  <TaskItem
+                    task={item}
+                    {...handlers}
+                    showLocation={showLocation}
+                    showScheduled={showScheduled}
+                  />
+                )}
+              </Li>
+            ))}
+            {addingTask && (
+              <Li key="ADDING_TASK">
+                <EditingItem
+                  task={{ id: -1 /* FIXME: hack to satisy TS for now */, label: "New task", status: "TODO", scheduled: null, ...addTaskPreset }}
+                  onConfirmEdit={(task, label) => {
+                    addTask({ ...task, label });
+                    setAddingTask(false);
+                  }}
+                  onCancelEdit={() => setAddingTask(false)}
+                  onComplete={() => null}
                 />
-              )}
-            </Li>
-          ))}
-        </Ul>
+              </Li>
+            )}
+          </Ul>
         </div>
       ))}
-      {/* {splitCompletedTasks ? (
-        <Ul>
-          {open.map((item, index) => (
-            <Li key={item.id}>
-              {item.type === "project" ? (
-                <ProjectItem>{item.label}</ProjectItem>
-              ) : (
-                <TaskItem
-                  task={item}
-                  {...handlers}
-                  showLocation={showLocation}
-                  showScheduled={showScheduled}
-                />
-              )}
-            </Li>
-          ))}
-        </Ul>
-      ) : (
-        <Ul>
-          {items.map((item, index) => (
-            <Li key={item.id}>
-              {item.type === "project" ? (
-                <ProjectItem>{item.label}</ProjectItem>
-              ) : (
-                <TaskItem
-                  task={item}
-                  {...handlers}
-                  showLocation={showLocation}
-                  showScheduled={showScheduled}
-                />
-              )}
-            </Li>
-          ))}
-        </Ul>
-      )} */}
-      {addTask && (
+      {!addingTask && (
         <Button
-          onClick={() => addTask({ label: "New task", status: "TODO", scheduled: null, ...addTaskPreset })}
+          onClick={() => setAddingTask(true)}
         >
           <Plus /> Add task
         </Button>
