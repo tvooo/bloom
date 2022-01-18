@@ -5,11 +5,13 @@ import getListViewProps from "components/listview/getListViewProps";
 import { useLists, useTasks } from "utils/api";
 import { isArea, isProject } from "utils/filters";
 import ApplicationLayout from "components/layouts/ApplicationLayout";
+import { useRouter } from "next/router";
 
 const Page = () => {
-  const [route, setRoute] = useState("_today");
+  const router = useRouter();
+  const { listId } = router.query;
   const { tasks } = useTasks();
-  const {lists} = useLists();
+  const { lists } = useLists();
 
   const areas = lists.filter(isArea);
   const projects = lists.filter(isProject);
@@ -18,7 +20,7 @@ const Page = () => {
     return "whoops";
   }
 
-  const viewProps = getListViewProps(route, tasks, lists);
+  const viewProps = getListViewProps(`${listId}`, tasks, lists);
 
   return (
     <ApplicationLayout title={viewProps.title}>

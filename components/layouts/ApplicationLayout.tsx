@@ -1,4 +1,3 @@
-import { css } from "@linaria/core";
 import { styled } from "@linaria/react";
 import Navigation from "components/navigation/Navigation";
 import Toolbar from "components/toolbar/Toolbar"
@@ -32,11 +31,9 @@ const Column = styled.div`
 interface ApplicationLayoutProps {
     title?: string;
     children?: ReactNode;
-    route: (s: string) => void;
-    currentRoute: string;
 }
 
-const ApplicationLayout = ({ title, children, route, currentRoute }: ApplicationLayoutProps) => {
+const ApplicationLayout = ({ title, children }: ApplicationLayoutProps) => {
     const [showSidebar, toggleSidebar] = useState(true);
     return (
         <GlobalStyle>
@@ -49,10 +46,7 @@ const ApplicationLayout = ({ title, children, route, currentRoute }: Application
             <Toolbar showSidebar={showSidebar} onToggleSidebar={() => toggleSidebar(t => !t)} />
             <Container showSidebar={showSidebar}>
                 <Column className="sidebar">
-                    <Navigation
-                    route={(r) => { route(r); toggleSidebar(false); }}
-                    currentRoute={currentRoute}
-                    />
+                    <Navigation />
                 </Column>
                 <Column className="content" style={{ flex: '1 1 100%', minWidth: 0 }}>{children}
                 </Column>

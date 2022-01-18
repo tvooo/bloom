@@ -34,15 +34,22 @@ passport.use(new LocalStrategy({
 }));
 
 app.use(logger('dev'));
-if(process.env.NODE_ENV === "development") {
-    app.use(createProxyMiddleware(['/**', '!/api/**'], { target: 'http://localhost:3000', ws: true }));
+app.get('/', (_req, res) => {
+    res.redirect('/list/_today');
+});
+if (process.env.NODE_ENV === "development") {
+    app.use(createProxyMiddleware(['/**', '!/api/**'], {
+        target: 'http://localhost:3000',
+        ws: true,
+    }));
 } else {
+    app.use('/list/*', express.static(__dirname + '/../out/list/[listId].html'));
     app.use(serveStatic(__dirname + '/../out'));
 }
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-if(process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development") {
     console.log('Running in development mode. CORS is enabled.');
     app.use(cors());
 } else {

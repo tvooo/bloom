@@ -17,6 +17,7 @@ import { inProject, isArea, isProject } from "utils/filters";
 import { useLists, useTasks } from "utils/api";
 import type { Task } from "model/task";
 import { Area, Project } from "model/list";
+import { useRouter } from "next/router";
 
 const NavigationWrapper = styled.div`
   display: flex;
@@ -29,46 +30,41 @@ const getProgress = (tasks: Task[]): number =>
     ? (100 * tasks.filter((t) => t.status === "DONE").length) / tasks.length
     : 0;
 
-interface NavigationProps {
-  route: (n: string) => void;
-  currentRoute: string
-}
-const Navigation: React.FC<NavigationProps> = ({ route, currentRoute }) => {
+const Navigation: React.FC = () => {
+  const router = useRouter();
   const { lists, addList } = useLists();
   const { tasks } = useTasks();
   const areas: Area[] = lists.filter(isArea);
   const projects: Project[] = lists.filter(isProject);
-
-  const dispatch = () => null;
+  const getNavItemProps = (route: string) => ({
+    onClick: () => router.push(route),
+    isActive: router.asPath === route,
+  });
 
   return (
     <NavigationWrapper>
       <NavItem
-        onClick={() => route("_inbox")}
         icon={<MailOpened height="1.2em" />}
-        isActive={currentRoute === `_inbox`}
+        {...getNavItemProps('/list/_inbox')}
       >
         Inbox
       </NavItem>
       <NavItem
-        onClick={() => route("_today")}
         icon={<SunLight height="1.2em" color="var(--color-today)" />}
-        isActive={currentRoute === `_today`}
+        {...getNavItemProps('/list/_today')}
       >
         Today
       </NavItem>
       <NavItem
-        onClick={() => route("_upcoming")}
         icon={<Calendar height="1.2em" color="var(--color-today)" />}
-        isActive={currentRoute === `_upcoming`}
+        {...getNavItemProps('/list/_upcoming')}
       >
         Upcoming
       </NavItem>
       <Separator />
       <NavItem
-        onClick={() => route("_archive")}
         icon={<Box height="1.2em" color="var(--color-today)" />}
-        isActive={currentRoute === `_archive`}
+        {...getNavItemProps('/list/_archive')}
       >
         Archive
       </NavItem>
@@ -76,13 +72,12 @@ const Navigation: React.FC<NavigationProps> = ({ route, currentRoute }) => {
       {projects.filter(project => project.status === "OPEN").map((project) => (
         <NavItem
           key={project.id}
-          onClick={() => route(`${project.id}`)}
           icon={
             <ProgressPie
               progress={getProgress(tasks.filter(inProject(project)))}
             />
           }
-          isActive={currentRoute === `${project.id}`}
+          {...getNavItemProps(`/list/${project.id}`)}
         >
           {project.label}
         </NavItem>
@@ -91,9 +86,8 @@ const Navigation: React.FC<NavigationProps> = ({ route, currentRoute }) => {
       {areas.map((area) => (
         <NavItem
           key={area.id}
-          onClick={() => route(`${area.id}`)}
           icon={<BoxIso height="1.2em" color="var(--color-area)" />}
-          isActive={currentRoute === `${area.id}`}
+          {...getNavItemProps(`/list/${area.id}`)}
         >
           {area.label}
         </NavItem>
