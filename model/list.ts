@@ -7,6 +7,7 @@ export interface Project extends DataItem {
   type: "PROJECT";
   status: "OPEN" | "COMPLETED";
   completedAt?: Date;
+  scheduled: Date | null;
 }
 export interface Area extends DataItem {
   label: string;

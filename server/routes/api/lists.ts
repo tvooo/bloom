@@ -60,8 +60,8 @@ router.get('/:id', auth.required, (req, res, next) => {
 
 router.patch('/:id', auth.required, (req, res, next) => {
   const { id } = req.params;
-  const { label, status, completedAt } = req.body;
-  db.run('UPDATE lists SET label = ?, status = ?, updatedAt = ?, completedAt = ? WHERE id = ?', [label, status, formatISO(new Date()), completedAt, id], (error: Error | null, result: any) => {
+  const { label, status, completedAt, scheduled } = req.body;
+  db.run('UPDATE lists SET label = ?, status = ?, updatedAt = ?, completedAt = ?, scheduled = ? WHERE id = ?', [label, status, formatISO(new Date()), completedAt, scheduled, id], (error: Error | null, result: any) => {
     if (error) {
       res.status(400);
       return res.send(error.message);

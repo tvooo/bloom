@@ -1,16 +1,20 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { Plus } from "iconoir-react";
+import { Calendar, Plus, Settings } from "iconoir-react";
 import type { List } from "model/list";
 import { TaskItem, ProjectItem } from "components/item/Item";
 import Button from "components/Button";
 import { Ul, Li } from "./List";
 import ToggleCompletedLink from "./ToggleCompletedLink";
-import ListViewHeader, { ListViewHeaderInput } from "./ListViewHeader";
+import ListViewHeader, { ListViewHeaderInput, ListViewMeta, ListViewTitle } from "./ListViewHeader";
 import ListViewWrapper from "./ListViewWrapper";
 import { Task } from "model/task";
 import { useLists, useTasks } from "utils/api";
 import { EditingItem } from "components/item/EditingItem";
 import groupByDate from "./groupByDate";
+import Menu from "components/menu/Menu";
+import ProjectContextMenu from "components/menus/ProjectContextMenu";
+import { format, formatRelative } from "date-fns";
+import { ensureDate } from "utils/filters";
 
 export interface ListViewProps {
   items: any[];
@@ -86,23 +90,35 @@ const ListView: FC<ListViewProps> = ({
   return (
     <ListViewWrapper>
       <ListViewHeader>
-        {list && list.type === "PROJECT" ? (
-          <div onClick={() => {
-            updateList({ ...list, status: list.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED' });
-          }}>{icon}</div>
-        ) : icon}
-        {isEditing && isRenamable ? (
-          <ListViewHeaderInput
-            autoFocus
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            value={label}
-            onBlur={handleBlur}
-          />
-        ) : (
-          <div onClick={() => isRenamable && setEditing(true)}>{title}</div>
+        <ListViewTitle>
+          {list && list.type === "PROJECT" ? (
+            <div onClick={() => {
+              updateList({ ...list, status: list.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED' });
+            }}>{icon}</div>
+          ) : icon}
+          {isEditing && isRenamable ? (
+            <ListViewHeaderInput
+              autoFocus
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              value={label}
+              onBlur={handleBlur}
+            />
+          ) : (
+            <div onClick={() => isRenamable && setEditing(true)}>{title}</div>
+          )}
+        </ListViewTitle>
+        {list && list.type === "PROJECT" && (
+          <Menu trigger={<Settings />}>
+            <ProjectContextMenu project={list} />
+          </Menu>
         )}
       </ListViewHeader>
+      {list && list.type === "PROJECT" && list.scheduled && (
+        <ListViewMeta>
+          <Calendar /> {format(ensureDate(list.scheduled), "EEE, d MMM yyyy")}
+        </ListViewMeta>
+      )}
       {sections.map(section => (
         <div key={section.label}>
           {section.label && <h3>{section.label}</h3>}

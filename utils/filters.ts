@@ -22,7 +22,7 @@ export const inArea = (area: Area) => (project: Project | Task): boolean => proj
 export const isScheduled = (task: Task): boolean => !!task.scheduled;
 export const isScheduledOn = (date: Date) => (task: Task): boolean =>
   task.scheduled ? isSameDay(ensureDate(task.scheduled), date) : false;
-export const isScheduledBefore = (date: Date) => (task: Task): boolean =>
+export const isScheduledBefore = (date: Date) => (task: { scheduled: Date | null }): boolean =>
   task.scheduled ? isBefore(ensureDate(task.scheduled), date) : false;
 export const isScheduledAfter = (date: Date) => (task: Task): boolean =>
   task.scheduled ? isAfter(ensureDate(task.scheduled), date) : false;

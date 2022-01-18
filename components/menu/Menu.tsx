@@ -11,6 +11,7 @@ const Popover = styled.div`
 `;
 
 const MenuWrapper = styled.ul`
+  list-style: none;
   background: white;
   box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.05);
   border-radius: var(--space-xs);

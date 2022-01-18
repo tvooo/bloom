@@ -1,11 +1,26 @@
 import { styled } from "@linaria/react";
 
-const ListViewHeader = styled.h2`
+const ListViewHeader = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: var(--space-large);
+  justify-content: space-between;
+`;
+
+export const ListViewTitle = styled.h2`
+  display: flex;
+  align-items: center;
   gap: 0.2em;
 `;
+
+export const ListViewMeta = styled.div`
+  background: var(--color-neutral-light);
+  padding: var(--space-sm) var(--space-sm);
+  margin-bottom: var(--space-large);
+  display: inline-flex;
+  gap: 0.2em;
+  border-radius: 0.2rem;
+`
 
 export const ListViewHeaderInput = styled.input`
   font-weight: bold;
