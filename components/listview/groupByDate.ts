@@ -2,6 +2,15 @@ import { format, isBefore, isSameDay, isSameWeek, isTomorrow, nextMonday, nextSa
 import { Task } from "model/task";
 import { ensureDate } from "utils/filters";
 
+const dateStringSort = (first: string, second: string) => {
+  // Sorts in this order, and all other dates after
+  // FIXME: I realise that's not ideal or correct. Need to improve later.
+  const precedence = ['Tomorrow', 'Weekend', 'Next week'];
+  const firstValue = precedence.indexOf(first) > -1 ? precedence.indexOf(first) - 10 : 5;
+  const secondValue = precedence.indexOf(second) > -1 ? precedence.indexOf(second) - 10 : 5;
+  return firstValue - secondValue;
+}
+
 const groupByDate = (items: Task[]): Array<{ label: string; items: Task[] }> => {
     const result: Record<string, Task[]> = {};
     items.forEach(item => {
@@ -27,7 +36,7 @@ const groupByDate = (items: Task[]): Array<{ label: string; items: Task[] }> => 
       }
       result[label] = result[label] ? [...result[label], item] : [item];
     });
-    return Object.keys(result).map(dt => ({ label: dt, items: result[dt] }));
+    return Object.keys(result).sort(dateStringSort).map(dt => ({ label: dt, items: result[dt] }));
   }
 
   export default groupByDate;
