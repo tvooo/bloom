@@ -28,3 +28,5 @@ export const isScheduledAfter = (date: Date) => (task: Task): boolean =>
   task.scheduled ? isAfter(ensureDate(task.scheduled), date) : false;
 // Generic filters
 export const not = (fn: (...item: any[]) => boolean) => (...item: any[]): boolean => !fn(...item);
+
+export const isCompleted = (item: Task | Project) => item.status === "DONE" || item.status === "COMPLETED";

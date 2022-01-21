@@ -9,7 +9,7 @@ import {
 import {
   Task,
 } from "model/task";
-import { inArea, inProject, not, isScheduledAfter, isScheduledBefore, isScheduled, ensureDate } from "utils/filters";
+import { inArea, inProject, not, isScheduledAfter, isScheduledBefore, isScheduled, ensureDate, isCompleted } from "utils/filters";
 import type { ListViewProps } from './ListView';
 import { ProgressPie } from "components/Pie";
 import { endOfToday, isToday, parseISO, startOfToday, startOfTomorrow } from "date-fns";
@@ -27,7 +27,7 @@ const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListView
       title: "Inbox",
       icon: <MailOpened height="1em" />,
       showScheduled: true,
-      items: tasks.filter(t => !t.list).filter(not(isScheduled)),
+      items: tasks.filter(t => !t.list).filter(not(isScheduled)).filter(not(isCompleted)),
       ...commonProps,
     };
   }
