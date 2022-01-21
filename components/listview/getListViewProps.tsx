@@ -36,15 +36,7 @@ const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListView
     return {
       title: "Today",
       icon: <SunLight height="1em" color="var(--color-today)" />,
-      items: tasks.filter(task => {
-        if(isScheduledBefore(startOfTomorrow())(task) && task.status === "TODO") {
-          return true;
-        }
-        if(task.status === "DONE" && !!task.completedAt && isToday(ensureDate(task.completedAt))) {
-          return true;
-        }
-        return false;
-      }),
+      items: tasks.filter(isScheduledBefore(startOfTomorrow())).filter(not(isCompleted)),
       showLocation: true,
       showScheduled: false,
       addTaskPreset: { scheduled: startOfToday() },
@@ -71,6 +63,7 @@ const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListView
       items: tasks.filter(t => t.status === "DONE"),
       showLocation: true,
       showScheduled: true,
+      splitByDate: true, // FIXME: should be completed date, not scheduled date in this case
       ...commonProps,
       splitCompletedTasks: false,
     };
