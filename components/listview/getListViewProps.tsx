@@ -56,7 +56,7 @@ const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListView
     return {
       title: "Upcoming",
       icon: <Calendar height="1em" />,
-      items: tasks.filter(isScheduledAfter(endOfToday())),
+      items: tasks.filter(isScheduledAfter(endOfToday())).filter(not(isCompleted)),
       showLocation: true,
       showScheduled: false,
       splitByDate: true,
