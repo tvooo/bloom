@@ -3,6 +3,7 @@ import Logo from "components/toolbar/Logo";
 import Toolbar from "components/toolbar/Toolbar"
 import Head from "next/head"
 import { ReactNode } from "react";
+import { APPLICATION_NAME } from "utils/meta";
 import GlobalStyle from "./GlobalStyle"
 
 const Container = styled.div`
@@ -27,7 +28,7 @@ const AuthLayout = ({ title, children }: AuthLayoutProps) => {
     return (
         <GlobalStyle>
             <Head>
-                <title>{title ? `${title} — bloom` : 'bloom'}</title>
+                <title>{title ? `${title} — ${APPLICATION_NAME}` : APPLICATION_NAME}</title>
             </Head>
             <Container>
                 <Logo />

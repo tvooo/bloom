@@ -8,6 +8,11 @@ import type { Task } from "model/task";
 import { useList } from "utils/api";
 import { isScheduledOn } from "utils/filters";
 
+export const TaskContextMenuTrigger = styled.div`
+  flex: 0 0 auto;
+  visibility: hidden;
+`
+
 export const ScheduledIndicator = ({ task }: { task: Task }) => {
     if (task.scheduled && isScheduledOn(startOfToday())(task)) {
       return <SunLight height="1.2em" style={{marginLeft: "var(--space-sm)"}} />;
@@ -50,6 +55,10 @@ export const TaskLocation = ({ task }: { task: Task }) => {
   &:hover {
     background: var(--color-neutral-lighter);
     transition: background 0.1s ease, outline 0.05s ease-out;
+
+    ${TaskContextMenuTrigger} {
+      visibility: visible;
+    }
   }
 `;
 

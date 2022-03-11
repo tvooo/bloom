@@ -3,8 +3,10 @@ import { styled } from '@linaria/react';
 
 const Wrapper = styled.div`
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
+  padding: 0 0px 0 4px;
+  box-sizing: content-box;
 `
 
 const Logo = () => (

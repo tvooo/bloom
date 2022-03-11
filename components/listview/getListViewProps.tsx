@@ -97,6 +97,7 @@ const getListViewProps = (route: string, tasks: Task[], lists: List[]): ListView
         isRenamable: true,
         addTaskPreset: { list: list.id },
         list,
+        splitLater: true,
         ...commonProps,
       };
     }

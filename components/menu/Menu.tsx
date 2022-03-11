@@ -10,7 +10,7 @@ const Popover = styled.div`
   right: 0;
 `;
 
-const MenuWrapper = styled.ul`
+export const MenuWrapper = styled.ul`
   list-style: none;
   background: white;
   box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.05);

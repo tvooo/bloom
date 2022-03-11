@@ -7,7 +7,7 @@ import StatusIndicator from "./StatusIndicator";
 import Menu from "components/menu/Menu";
 import TaskContextMenu from "components/menus/TaskContextMenu";
 import { Task } from "model/task";
-import { ScheduledIndicator, TaskContainer, TaskLabel, TaskLocation } from './common'
+import { ScheduledIndicator, TaskContainer, TaskContextMenuTrigger, TaskLabel, TaskLocation } from './common'
 import { EditingItem } from "./EditingItem";
 
 interface TaskItemProps {
@@ -49,11 +49,11 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         {showLocation && <TaskLocation task={task} />}
       </div>
 
-      <div style={{ flex: "0 0 auto" }}>
+      <TaskContextMenuTrigger>
         <Menu trigger={<MoreVert />}>
           <TaskContextMenu task={task} />
         </Menu>
-      </div>
+      </TaskContextMenuTrigger>
     </TaskContainer>
   ));
 };

@@ -15,6 +15,17 @@ import Menu from "components/menu/Menu";
 import ProjectContextMenu from "components/menus/ProjectContextMenu";
 import { format, formatRelative } from "date-fns";
 import { ensureDate } from "utils/filters";
+import splitLaterTasks from "./splitLater";
+import { styled } from "@linaria/react";
+
+const EmptyState = styled.div`
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-neutral-light);
+  font-size: 8rem;
+`
 
 export interface ListViewProps {
   items: any[];
@@ -26,6 +37,7 @@ export interface ListViewProps {
   list?: List;
   splitCompletedTasks?: boolean;
   splitByDate?: boolean;
+  splitLater?: boolean;
   addTaskPreset?: Partial<Task>,
 }
 
@@ -40,10 +52,12 @@ const ListView: FC<ListViewProps> = ({
   list,
   addTaskPreset,
   splitByDate,
+  splitLater,
 }) => {
   const open = items.filter((i) => i.status !== "DONE");
   const completed = items.filter((i) => i.status === "DONE");
   const [showCompleted, toggleCompleted] = useState(false);
+  const [showLater, toggleLater] = useState(false);
   const [addingTask, setAddingTask] = useState(false);
 
   const { addTask, updateTask } = useTasks();
@@ -81,39 +95,21 @@ const ListView: FC<ListViewProps> = ({
     setEditing(false);
     setLabel(title);
   }, [title]);
-  const sections = splitByDate ? groupByDate(items) : [{
+  const sections = splitByDate ? groupByDate(items) : splitLater ? [splitLaterTasks(splitCompletedTasks ? open : items)[0]] : [{
     label: null,
-    items: splitCompletedTasks ? open : items
+    items: splitCompletedTasks ? open : items,
+  }];
+  const later = splitLaterTasks(splitCompletedTasks ? open : items)[1];
+
+  if(items.length === 0) {
+    return <EmptyState>
+      {icon}
+    </EmptyState>
   }
-  ];
 
   return (
     <ListViewWrapper>
-      <ListViewHeader>
-        <ListViewTitle>
-          {list && list.type === "PROJECT" ? (
-            <div onClick={() => {
-              updateList({ ...list, status: list.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED' });
-            }}>{icon}</div>
-          ) : icon}
-          {isEditing && isRenamable ? (
-            <ListViewHeaderInput
-              autoFocus
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              value={label}
-              onBlur={handleBlur}
-            />
-          ) : (
-            <div onClick={() => isRenamable && setEditing(true)}>{title}</div>
-          )}
-        </ListViewTitle>
-        {list && list.type === "PROJECT" && (
-          <Menu trigger={<Settings />}>
-            <ProjectContextMenu project={list} />
-          </Menu>
-        )}
-      </ListViewHeader>
+      
       {list && list.type === "PROJECT" && list.scheduled && (
         <ListViewMeta>
           <Calendar /> {format(ensureDate(list.scheduled), "EEE, d MMM yyyy")}
@@ -153,6 +149,34 @@ const ListView: FC<ListViewProps> = ({
           </Ul>
         </div>
       ))}
+      {splitLater && later.items.length > 0 && (
+        <>
+        {showLater && (
+          <div>
+          {later.label && <h3>{later.label}</h3>}
+          <Ul>
+            {later.items.map((item, index) => (
+              <Li key={item.id}>
+                {/* {item?.type === "project" ? (
+                  <ProjectItem>{item.label}</ProjectItem>
+                ) : ( */}
+                  <TaskItem
+                    task={item}
+                    {...handlers}
+                    showLocation={showLocation}
+                    showScheduled={showScheduled}
+                  />
+                {/* )} */}
+              </Li>
+            ))}
+            </Ul>
+            </div>
+        )}
+        <ToggleCompletedLink onClick={() => toggleLater((show) => !show)}>
+        {showLater ? "Hide" : "Show"} {later.items.length} later tasks
+      </ToggleCompletedLink>
+        </>
+      )}
       {!addingTask && (
         <Button
           onClick={() => setAddingTask(true)}

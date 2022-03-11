@@ -8,7 +8,7 @@ const StatusIndicatorWrapper = styled.button`
   border: none;
   margin: 0;
   padding: 0;
-  color: grey;
+  color: var(--color-neutral-medium);
   cursor: pointer;
   background: transparent;
   transition: 0.1s color ease, transform 0.05s ease;
@@ -47,14 +47,14 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
   return status === "DONE" ? (
     <StatusIndicatorWrapper>
       <CheckCircledOutline
-        height="1.6em"
+        height="1.4em"
         onClick={handleClick}
       />
     </StatusIndicatorWrapper>
   ) : (
     <StatusIndicatorWrapper>
       <Circle
-        height="1.6em"
+        height="1.4em"
         onClick={handleClick}
       />
     </StatusIndicatorWrapper>
