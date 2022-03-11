@@ -112,13 +112,15 @@ const GlobalStyle = styled.div`
   --color-neutral-lighter: #faf9f9;
   --color-neutral-light: #f1eced;
 
+  --color-neutral-medium: #948687;
+
   --color-focus: #7c5ea5;
 
   --color-project: #437659;
   --color-project: #7c5ea5;
   --color-today: #6166aa;
   --color-next: #6166aa;
-  --color-area: #73a6ca;
+  --color-area: #437659;
   --color-destructive: #9c595e;
 
   --space-xs: 4px;
@@ -142,7 +144,7 @@ const GlobalStyle = styled.div`
 
   background: var(--color-neutral-lighter);
 
-  font-family: Inter;
+  font-family: Karla, Inter;
 `;
 
 export default GlobalStyle;

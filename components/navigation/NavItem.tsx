@@ -22,7 +22,7 @@ const NavItemContainer = styled.div`
     transition: background 0.1s ease;
   }
   &[aria-pressed="true"] {
-    font-weight: bold;
+    font-weight: 600;
   }
 `;
 

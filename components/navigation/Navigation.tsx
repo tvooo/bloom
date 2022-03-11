@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { styled } from "@linaria/react";
 import {
   SunLight,
-  BoxIso,
   MailOpened,
   Plus,
   Calendar,
   Box,
+  Svg3DSelectSolid,
 } from "iconoir-react";
 
 import NavItem from "./NavItem";
@@ -25,6 +25,10 @@ const NavigationWrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  flex: 1 1 auto;
+  overflow-y: scroll;
+  padding: var(--space-md);
 `;
 
 const getProgress = (tasks: Task[]): number =>
@@ -119,7 +123,7 @@ const Navigation: React.FC = () => {
       {areas.map((area) => (
         <NavItem
           key={area.id}
-          icon={<BoxIso height="1.2em" color="var(--color-area)" />}
+          icon={<Svg3DSelectSolid height="1.2em" color="var(--color-area)" />}
           {...getNavItemProps(`/list/${area.id}`)}
         >
           {area.label}
