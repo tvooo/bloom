@@ -11,13 +11,15 @@ const Button = styled.button`
     align-items: center;
     justify-content: center;
 
+    border-bottom: 1px solid var(--color-neutral-light);
+
     &:focus {
         outline: 4px solid cornflowerblue;
     }
 
     &:hover {
         background: var(--color-neutral-light);
-
+        border-color: var(--color-neutral-medium-light);
     }
 `
 

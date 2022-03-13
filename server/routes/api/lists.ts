@@ -38,8 +38,9 @@ router.get('/areas', auth.required, (req, res, next) => {
 router.post('/', auth.required, (req, res, next) => {
   const { label, list, type } = req.body;
   const now = formatISO(new Date());
-  db.get('INSERT INTO lists (label, list, type, status, createdAt, updateAt) VALUES (?, ?, ?, ?, ?, ?)', [label, list, type, 'OPEN', now, now], (error, result) => {
+  db.get('INSERT INTO lists (label, list, type, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)', [label, list, type, 'OPEN', now, now], (error, result) => {
     if (error) {
+      console.log(error);
       res.status(400);
       return res.send(error.message);
     }
