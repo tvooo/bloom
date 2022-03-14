@@ -31,12 +31,14 @@ interface NavItemProps {
   icon: React.ReactNode;
   onClick?: () => void;
   isActive?: boolean;
+  badge?: React.ReactNode;
 }
 
-const NavItem: React.FC<NavItemProps> = ({ children, onClick, icon, isActive }) => (
+const NavItem: React.FC<NavItemProps> = ({ children, onClick, icon, isActive, badge = null }) => (
   <NavItemContainer onClick={onClick} aria-pressed={isActive}>
     {icon}
     <NavItemLabel>{children}</NavItemLabel>
+    {badge}
   </NavItemContainer>
 );
 

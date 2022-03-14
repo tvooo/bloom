@@ -111,6 +111,7 @@ const GlobalStyle = styled.div`
   --color-neutral-lightest: white;
   --color-neutral-lighter: #faf9f9;
   --color-neutral-light: #f1eced;
+  --color-neutral-medium-light: #dbd0d2;
 
   --color-neutral-medium: #948687;
 
@@ -144,7 +145,9 @@ const GlobalStyle = styled.div`
 
   background: var(--color-neutral-lighter);
 
-  font-family: Karla, Inter;
+  font-family: Karla, -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, Roboto,
+  Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+  "Segoe UI Symbol";
 `;
 
 export default GlobalStyle;

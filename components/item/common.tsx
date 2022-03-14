@@ -10,7 +10,9 @@ import { isScheduledOn } from "utils/filters";
 
 export const TaskContextMenuTrigger = styled.div`
   flex: 0 0 auto;
-  visibility: hidden;
+  & > :first-child {
+    opacity: 0;
+  }
 `
 
 export const ScheduledIndicator = ({ task }: { task: Task }) => {
@@ -56,8 +58,8 @@ export const TaskLocation = ({ task }: { task: Task }) => {
     background: var(--color-neutral-lighter);
     transition: background 0.1s ease, outline 0.05s ease-out;
 
-    ${TaskContextMenuTrigger} {
-      visibility: visible;
+    ${TaskContextMenuTrigger} > :first-child {
+      opacity: 1;
     }
   }
 `;

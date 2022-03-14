@@ -4,11 +4,12 @@ import {
 } from "iconoir-react";
 import { useState } from "react";
 import StatusIndicator from "./StatusIndicator";
-import Menu from "components/menu/Menu";
 import TaskContextMenu from "components/menus/TaskContextMenu";
 import { Task } from "model/task";
 import { ScheduledIndicator, TaskContainer, TaskContextMenuTrigger, TaskLabel, TaskLocation } from './common'
 import { EditingItem } from "./EditingItem";
+import { MenuButton, useMenuState } from "reakit/Menu";
+import Button from "components/Button";
 
 interface TaskItemProps {
   task: Task;
@@ -24,6 +25,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   onComplete,
   onEdit,
 }) => {
+  const menu = useMenuState();
   const [isEditing, setEditing] = useState(false);
   return (isEditing ? (<EditingItem task={task} onConfirmEdit={(task, label) => {
     onEdit(task, label);
@@ -50,9 +52,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       </div>
 
       <TaskContextMenuTrigger>
-        <Menu trigger={<MoreVert />}>
-          <TaskContextMenu task={task} />
-        </Menu>
+        <MenuButton {...menu} as={Button} ><MoreVert /></MenuButton>
+        <TaskContextMenu menu={menu} task={task} />
       </TaskContextMenuTrigger>
     </TaskContainer>
   ));

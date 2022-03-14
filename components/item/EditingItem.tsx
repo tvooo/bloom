@@ -2,10 +2,11 @@ import { useCallback, useState } from "react";
 import StatusIndicator from "./StatusIndicator";
 import { Task } from "model/task";
 
-import { ScheduledIndicator, TaskContainer, TaskLabelInput } from './common';
-import Menu from "components/menu/Menu";
+import { ScheduledIndicator, TaskContainer, TaskContextMenuTrigger, TaskLabelInput } from './common';
 import TaskContextMenu from "components/menus/TaskContextMenu";
 import { MoreVert } from "iconoir-react";
+import { MenuButton, useMenuState } from "reakit/Menu";
+import Button from "components/Button";
 
 type TaskWithoutId = Task;
 
@@ -25,6 +26,7 @@ export const EditingItem: React.FC<EditingItemProps> = ({
   onConfirmEdit,
   onCancelEdit,
 }) => {
+  const menu = useMenuState();
   const [label, setLabel] = useState(task.label);
   const inputRef = useCallback((node: HTMLInputElement) => { if (node !== null) { node.setSelectionRange(0, node.value.length); } }, []);
 
@@ -52,7 +54,7 @@ export const EditingItem: React.FC<EditingItemProps> = ({
         status={task.status}
         onClick={() => onComplete(task, task.status === "TODO")}
       />
-      {showScheduled && <ScheduledIndicator task={{...task, id: -1}} />}
+      {showScheduled && <ScheduledIndicator task={{ ...task, id: -1 }} />}
       <TaskLabelInput
         ref={inputRef}
         autoFocus
@@ -62,11 +64,10 @@ export const EditingItem: React.FC<EditingItemProps> = ({
         onBlur={handleBlur}
       />
 
-      <div style={{ flex: "0 0 auto" }}>
-        <Menu trigger={<MoreVert />}>
-          <TaskContextMenu task={{...task, id: -1}} />
-        </Menu>
-      </div>
+      <TaskContextMenuTrigger>
+        <MenuButton {...menu} as={Button} ><MoreVert /></MenuButton>
+        <TaskContextMenu menu={menu} task={task} />
+      </TaskContextMenuTrigger>
     </TaskContainer>
   );
 };

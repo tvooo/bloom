@@ -19,9 +19,9 @@ export const ListViewTitle = styled.h2`
 
 export const ListViewMeta = styled.div`
   background: var(--color-neutral-light);
-  padding: var(--space-sm) var(--space-sm);
+  padding: var(--space-md);
   margin-bottom: var(--space-large);
-  display: inline-flex;
+  display: flex;
   gap: 0.2em;
   border-radius: 0.2rem;
 `
