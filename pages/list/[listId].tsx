@@ -23,7 +23,7 @@ const Page = () => {
   const viewProps = getListViewProps(`${listId}`, tasks, lists);
 
   return (
-    <ApplicationLayout title={viewProps.title}>
+    <ApplicationLayout title={viewProps.title} list={viewProps.list} icon={viewProps.icon}>
       <View
         {...viewProps}
       />

@@ -2,7 +2,7 @@ import { styled } from "@linaria/react";
 import Navigation from "components/navigation/Navigation";
 import Toolbar from "components/toolbar/Toolbar"
 import Head from "next/head"
-import { ReactNode, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import GlobalStyle from "./GlobalStyle"
 import { APPLICATION_NAME } from "utils/meta";
 import { NavArrowDown, SidebarCollapse, SidebarExpand, User } from "iconoir-react";
@@ -14,8 +14,10 @@ import {
   MenuButton,
 } from "reakit/Menu";
 import { LogoType } from "components/toolbar/Logo";
-import ListViewHeader, { ListViewMeta, ListViewTitle } from "components/listview/ListViewHeader";
+import ListViewHeader, { ListViewHeaderInput, ListViewMeta, ListViewTitle } from "components/listview/ListViewHeader";
 import UserMenu from "components/menus/UserMenu";
+import { List } from "model/list";
+import { useList, useLists } from "utils/api";
 
 
 const Container = styled.div<{ showSidebar: boolean }>`
@@ -34,6 +36,8 @@ const Column = styled.div`
 interface ApplicationLayoutProps {
   title?: string;
   children?: ReactNode;
+  list?: List;
+  icon?: ReactNode;
 }
 
 const MenuWrapper = styled.div`
@@ -63,7 +67,66 @@ const Header = styled.div`
   border-right:1px solid var(--color-neutral-light);
 `;
 
-const ApplicationLayout = ({ title, children }: ApplicationLayoutProps) => {
+const ListHeaderTitle: React.FC<Pick<ApplicationLayoutProps, 'icon'> & { list: List }> = ({ list, icon }) => {
+
+  const [isEditing, setEditing] = useState(false);
+  const [label, setLabel] = useState(list.label);
+  const { updateList } = useLists();
+
+  const handleChange = useCallback((e) => {
+    setLabel(e.target.value);
+  }, []);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Escape") {
+        setEditing(false);
+        setLabel(list.label);
+      }
+      if (e.key === "Enter") {
+        updateList({ ...list, label });
+        setEditing(false);
+      }
+    },
+    [label]
+  );
+  const handleBlur = useCallback(() => {
+    setEditing(false);
+    setLabel(list.label);
+  }, [list.label]);
+  useEffect(() => {
+    setLabel(list.label);
+  }, [list.label]);
+  return (
+      <div style={{display: 'flex', alignItems: 'center', gap: 'var(--space-sm)'}}>
+        {list && list.type === "PROJECT" ? (
+            <div style={{cursor: 'pointer'}} onClick={() => {
+              updateList({ ...list, status: list.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED' });
+            }}>{icon}</div>
+          ) : icon}
+          {isEditing ? (
+            <ListViewHeaderInput
+              autoFocus
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              value={label}
+              onBlur={handleBlur}
+            />
+          ) : (
+            <h2 onClick={() => setEditing(true)}>{list.label}</h2>
+          )}
+      </div>);
+}
+
+const HeaderTitle: React.FC<Pick<ApplicationLayoutProps, 'list' | 'title' | 'icon'>> = ({ list, title, icon }) => {
+  if(list) {
+    return <ListHeaderTitle list={list} icon={icon} />
+    
+  }
+  return (<h2 style={{display: 'flex', alignItems: 'center', gap: 'var(--space-sm)'}}>{icon} {title}</h2>);
+}
+
+
+const ApplicationLayout = ({ title, children, list, icon }: ApplicationLayoutProps) => {
   const [showSidebar, toggleSidebar] = useState(true);
   useHotkeys('[', () => toggleSidebar(t => !t));
   useHotkeys('Q', () => alert('Quick Add'));
@@ -81,39 +144,10 @@ const ApplicationLayout = ({ title, children }: ApplicationLayoutProps) => {
             </Column>
         <Column className="content" style={{ flex: '1 1 100%', minWidth: 0, background: 'white' }}>
           <Header>
-            {/* <Toolbar /> */}
             <Button onClick={() => toggleSidebar(t => !t)}>{showSidebar ? <SidebarCollapse /> : <SidebarExpand />}</Button>
-            <h2>{title}</h2>
+            <HeaderTitle title={title} list={list} icon={icon} />
             {/* <Button><Plus /> Quick add</Button>
                         <Button><Search /> Search</Button> */}
-
-            {/* <ListViewHeader>
-        <ListViewTitle>
-          {list && list.type === "PROJECT" ? (
-            <div onClick={() => {
-              updateList({ ...list, status: list.status === 'COMPLETED' ? 'OPEN' : 'COMPLETED' });
-            }}>{icon}</div>
-          ) : icon}
-          {isEditing && isRenamable ? (
-            <ListViewHeaderInput
-              autoFocus
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              value={label}
-              onBlur={handleBlur}
-            />
-          ) : (
-            <div onClick={() => isRenamable && setEditing(true)}>{title}</div>
-          )}
-        </ListViewTitle>
-        {list && list.type === "PROJECT" && (
-          // <Menu trigger={<Settings />}>
-          //   <ProjectContextMenu project={list} />
-          // </Menu>
-          <div>cog</div>
-        )}
-      </ListViewHeader> */}
-
             <MenuButton {...menu} as={Button}><User /> timbo <NavArrowDown /></MenuButton>
             <UserMenu menu={menu} />
           </Header>

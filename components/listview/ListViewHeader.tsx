@@ -35,6 +35,7 @@ export const ListViewHeaderInput = styled.input`
   border: 0;
   outline: 0;
   background: transparent;
+  text-align: center;
 
 `
 
