@@ -1,7 +1,8 @@
 import React from "react";
 import { styled } from "@linaria/react";
 import type { TaskStatus } from "model/task";
-import { CheckCircledOutline, Circle, LabelOutline } from "iconoir-react";
+import { LabelOutline } from "iconoir-react";
+import { CheckSquare, Square } from 'react-feather';
 
 const StatusIndicatorWrapper = styled.button`
   flex: 0 0 auto;
@@ -46,17 +47,11 @@ const StatusIndicator: React.FC<StatusIndicatorProps> = ({
 
   return status === "DONE" ? (
     <StatusIndicatorWrapper>
-      <CheckCircledOutline
-        height="1.4em"
-        onClick={handleClick}
-      />
+      <CheckSquare height="1.4em" strokeWidth="1.5" onClick={handleClick} />
     </StatusIndicatorWrapper>
   ) : (
     <StatusIndicatorWrapper>
-      <Circle
-        height="1.4em"
-        onClick={handleClick}
-      />
+      <Square height="1.4em" strokeWidth="1.5" onClick={handleClick} />
     </StatusIndicatorWrapper>
   );
 };
